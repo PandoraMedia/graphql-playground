@@ -50,6 +50,7 @@ export interface LinkCreatorProps {
   endpoint: string
   headers?: Headers
   credentials?: string
+  authorizationHeader: string
 }
 
 export interface Headers {
@@ -61,10 +62,14 @@ export const defaultLinkCreator = (
   subscriptionEndpoint?: string,
 ): { link: ApolloLink; subscriptionClient?: SubscriptionClient } => {
   let connectionParams = {}
-  const { headers, credentials } = session
+  const { headers, credentials, authorizationHeader } = session
 
   if (headers) {
     connectionParams = { ...headers }
+  }
+
+  if (authorizationHeader !== '' && headers != undefined) {
+    headers['Authorization'] = authorizationHeader
   }
 
   const httpLink = new HttpLink({
@@ -127,10 +132,12 @@ function* runQuerySaga(action) {
   if (session.tracingSupported && session.responseTracingOpen) {
     headers = set(headers, 'X-Apollo-Tracing', '1')
   }
+
   const lol = {
     endpoint: session.endpoint,
     headers,
     credentials: settings['request.credentials'],
+    authorizationHeader: settings['request.authorizationHeader'],
   }
 
   const { link, subscriptionClient } = linkCreator(lol, subscriptionEndpoint)
