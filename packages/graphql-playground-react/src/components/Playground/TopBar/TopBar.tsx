@@ -130,6 +130,17 @@ class TopBar extends React.Component<Props, {}> {
     } catch (e) {
       //
     }
+
+    const authorizationHeader = this.props.settings[
+      'request.authorizationHeader'
+    ]
+    if (
+      authorizationHeader &&
+      (sessionHeaders && !sessionHeaders.Authorization)
+    ) {
+      sessionHeaders.Authorization = authorizationHeader
+    }
+
     const headers = {
       'Accept-Encoding': 'gzip, deflate, br',
       'Content-Type': 'application/json',
