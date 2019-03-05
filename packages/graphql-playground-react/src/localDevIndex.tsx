@@ -95,12 +95,13 @@ const customLinkCreator = (
   session: LinkCreatorProps,
   wsEndpoint?: string,
 ): { link: ApolloLink } => {
-  const { headers, credentials } = session
+  const { headers, credentials, globalHeaders } = session
+  const combinedHeaders = { ...globalHeaders, ...headers }
 
   const link = new HttpLink({
     uri: session.endpoint,
     fetch,
-    headers,
+    headers: combinedHeaders,
     credentials,
   })
 

@@ -32,5 +32,5 @@ export interface ISettings {
   ['schema.polling.endpointFilter']: string
   ['schema.polling.interval']: number
   ['tracing.hideTracingResponse']: boolean
-  ['request.authorizationHeader']: ''
+  ['request.globalHeaders']: {}
 }

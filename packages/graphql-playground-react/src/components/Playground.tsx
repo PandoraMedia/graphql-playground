@@ -248,38 +248,22 @@ export class Playground extends React.PureComponent<Props & ReduxProps, State> {
     }
   }
 
-  withAuthHeader(headers: Headers, authHeader: string) {
-    if (
-      authHeader !== undefined &&
-      authHeader !== '' &&
-      headers &&
-      !headers['Authorization']
-    ) {
-      return {
-        ...headers,
-        Authorization: authHeader,
-      }
-    }
-    return headers
-  }
-
   async schemaGetter(propsInput?: Props & ReduxProps) {
     const props = this.props || propsInput
     const endpoint = props.sessionEndpoint || props.endpoint
     const currentSchema = this.state.schema
-    const authHeader = props.settings['request.authorizationHeader']
+    const globalHeaders = props.settings['request.globalHeaders']
+    const combinedHeaders = {
+      ...globalHeaders,
+      ...props.headers,
+    }
     try {
       const data = {
         endpoint,
         headers:
           props.sessionHeaders && props.sessionHeaders.length > 0
-            ? JSON.stringify(
-                this.withAuthHeader(
-                  JSON.parse(props.sessionHeaders),
-                  authHeader,
-                ),
-              )
-            : JSON.stringify(this.withAuthHeader(props.headers, authHeader)),
+            ? props.sessionHeaders
+            : JSON.stringify(combinedHeaders),
         credentials: props.settings['request.credentials'],
       }
       const schema = await schemaFetcher.fetch(data)
