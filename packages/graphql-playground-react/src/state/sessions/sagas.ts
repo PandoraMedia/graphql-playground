@@ -129,12 +129,15 @@ function* runQueryAtPosition(action) {
 function* getSessionWithCredentials() {
   const session = yield select(getSelectedSession)
   const settings = yield select(getSettings)
+  const combinedHeaders = {
+    ...settings['request.globalHeaders'],
+    ...JSON.parse(session.headers),
+  }
 
   return {
     endpoint: session.endpoint,
-    headers: session.headers,
+    headers: JSON.stringify(combinedHeaders),
     credentials: settings['request.credentials'],
-    globalHeaders: settings['request.globalHeaders'],
   }
 }
 

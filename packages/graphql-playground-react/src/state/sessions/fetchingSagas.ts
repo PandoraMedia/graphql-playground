@@ -131,9 +131,12 @@ function* runQuerySaga(action) {
   }
   const lol = {
     endpoint: session.endpoint,
-    headers,
-    credentials: settings['request.credentials'],
+    headers: {
+      ...settings['request.globalHeaders'],
+      ...headers,
+    },
     globalHeaders: settings['request.globalHeaders'],
+    credentials: settings['request.credentials'],
   }
 
   const { link, subscriptionClient } = linkCreator(lol, subscriptionEndpoint)
